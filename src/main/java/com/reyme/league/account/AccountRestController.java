@@ -22,8 +22,8 @@ public class AccountRestController {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    ResponseEntity<?> add(@RequestBody Account input) {
-        Account result = accountRepository.save(new Account(input.username, input.password));
+    ResponseEntity<?> addAccount(@RequestBody Account input) {
+        Account result = accountRepository.save(new Account(input.getUsername(), input.getPassword(), input.getTeam()));
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setLocation(ServletUriComponentsBuilder
                 .fromCurrentRequest().path("/{id}")

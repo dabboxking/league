@@ -4,6 +4,7 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders;
 import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.links;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -19,6 +20,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.reyme.league.account.Account;
 import com.reyme.league.account.AccountRepository;
+import com.reyme.league.team.Team;
+import com.reyme.league.team.TeamRepository;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -37,6 +40,8 @@ import org.springframework.web.context.WebApplicationContext;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = LeagueApplication.class)
@@ -48,6 +53,9 @@ public class LeagueApplicationTests {
 
 	@Autowired
 	private AccountRepository accountRepository;
+
+	@Autowired
+	private TeamRepository teamRepository;
 
 	@Autowired
 	void setConverters(HttpMessageConverter<?>[] converters) {
@@ -63,6 +71,8 @@ public class LeagueApplicationTests {
 
 	private Account account;
 
+	private Team team;
+
 	private String userName = "jsmith";
 
 	private String passWord = "1q2w3e";
@@ -77,7 +87,9 @@ public class LeagueApplicationTests {
 	public void setup() {
 		this.mockMvc = webAppContextSetup(this.context).build();
 		this.accountRepository.deleteAllInBatch();
-		this.account = accountRepository.save(new Account(userName, passWord));
+		this.teamRepository.deleteAllInBatch();
+		this.team = teamRepository.save(new Team("Blue"));
+		this.account = accountRepository.save(new Account(userName, passWord, null));
 	}
 
 	@Test
@@ -86,7 +98,7 @@ public class LeagueApplicationTests {
 	}
 
 	@Test
-	public void createAccount() throws Exception {
+	public void testAddAccount() throws Exception {
 		String accountJson = json(account);
 		this.mockMvc.perform(post("/accounts")
 				.contentType(contentType)
@@ -95,12 +107,76 @@ public class LeagueApplicationTests {
 	}
 
 	@Test
-	public void readSingleAccount() throws Exception {
+	public void testReadAccount() throws Exception {
 		this.mockMvc.perform(get("/accounts/" + userName))
 				.andExpect(status().isOk())
 				.andExpect(content().contentType(contentType))
 				.andExpect(jsonPath("$.id", is(this.account.getId().intValue())))
 				.andExpect(jsonPath("$.username", is(this.account.getUsername())));
+	}
+
+	@Test
+	public void testAddTeam() throws Exception {
+		String teamJson = json(team);
+		this.mockMvc.perform(post("/teams")
+				.contentType(contentType)
+				.content(teamJson))
+				.andExpect(status().isCreated());
+	}
+
+	@Test
+	public void testReadTeams() throws Exception {
+		this.mockMvc.perform(get("/teams"))
+				.andExpect(status().isOk())
+				.andExpect(content().contentType(contentType))
+				.andExpect(jsonPath("$", hasSize(1)))
+				.andExpect(jsonPath("$[0].id", is(this.team.getId().intValue())))
+				.andExpect(jsonPath("$[0].name", is(this.team.getName())));
+	}
+
+	@Test
+	public void testReadTeam() throws Exception {
+		this.mockMvc.perform(get("/teams/" + team.getId()))
+				.andExpect(status().isOk())
+				.andExpect(content().contentType(contentType))
+				.andExpect(jsonPath("$.id", is(this.team.getId().intValue())))
+				.andExpect(jsonPath("$.name", is(this.team.getName())));
+	}
+
+	@Test
+	public void testReadTeamMembers() throws Exception {
+		this.account.setTeam(team);
+		this.accountRepository.save(account);
+		this.mockMvc.perform(get("/teams/" + team.getId() + "/accounts"))
+				.andExpect(status().isOk())
+				.andExpect(content().contentType(contentType))
+				.andExpect(jsonPath("$", hasSize(1)))
+				.andExpect(jsonPath("$[0].id", is(this.account.getId().intValue())))
+				.andExpect(jsonPath("$[0].username", is(this.account.getUsername())));
+	}
+
+	@Test
+	public void testAddTeamMember() throws Exception {
+		this.mockMvc.perform(post("/teams/" + team.getId() + "/accounts/" + account.getId()))
+				.andExpect(status().isOk());
+		Team teamResult = this.teamRepository.findOne(team.getId());
+		Account accountResult = this.accountRepository.findOne(account.getId());
+		Assert.assertThat(accountResult.getTeam().getName(), is(teamResult.getName()));
+	}
+
+	@Test
+	public void testRemoveTeamMember() throws Exception {
+		this.account.setTeam(team);
+		this.accountRepository.save(account);
+
+		Account accountResultBefore = this.accountRepository.findOne(account.getId());
+		Assert.assertThat(accountResultBefore.getTeam().getName(), is(team.getName()));
+
+		this.mockMvc.perform(delete("/teams/" + team.getId() + "/accounts/" + account.getId()))
+				.andExpect(status().isOk());
+
+		Account accountResultAfter = this.accountRepository.findOne(account.getId());
+		Assert.assertThat(accountResultAfter.getTeam(), nullValue());
 	}
 
 	protected String json(Object o) throws IOException {

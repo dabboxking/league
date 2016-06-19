@@ -7,5 +7,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
  */
 public interface TeamRepository extends JpaRepository<Team, Long> {
 
+    /**
+     * Find team by name
+     * @param name
+     * @return
+     */
     Team findByName(String name);
 }

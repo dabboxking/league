@@ -17,17 +17,21 @@ public class Team {
 
     @Id
     @GeneratedValue
-    public Long id;
+    private Long id;
 
-    public String name;
+    private String name;
 
-    @OneToMany
-    public Set<Account> accounts = new HashSet<Account>();
+    @OneToMany(mappedBy = "team")
+    private Set<Account> accounts = new HashSet<>();
 
     Team() {
 
     }
 
+    /**
+     * Creates team with name
+     * @param name
+     */
     public Team(String name) {
         this.name = name;
     }

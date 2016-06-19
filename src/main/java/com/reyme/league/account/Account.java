@@ -16,23 +16,31 @@ public class Account {
 
     @Id
     @GeneratedValue
-    public Long id;
+    private Long id;
 
-    public String username;
+    private String username;
 
     @JsonIgnore
-    public String password;
+    private String password;
 
+    @JsonIgnore
     @ManyToOne
-    public Team team;
+    private Team team;
 
     Account() {
 
     }
 
-    public Account(String username, String password) {
+    /**
+     * Creates an account with username, password and team
+     * @param username
+     * @param password
+     * @param team
+     */
+    public Account(String username, String password, Team team) {
         this.username = username;
         this.password = password;
+        this.team = team;
     }
 
     public String getUsername() {
@@ -48,4 +56,8 @@ public class Account {
     }
 
     public Team getTeam() { return team; }
+
+    public void setTeam(Team team) {
+        this.team = team;
+    }
 }
