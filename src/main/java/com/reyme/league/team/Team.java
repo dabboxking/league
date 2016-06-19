@@ -55,8 +55,4 @@ public class Team {
     public void setAccounts(Set<Account> accounts) {
         this.accounts = accounts;
     }
-
-    public boolean isNew() {
-        return getId() == null;
-    }
 }

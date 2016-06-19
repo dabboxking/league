@@ -77,6 +77,8 @@ public class LeagueApplicationTests {
 
 	private String passWord = "1q2w3e";
 
+	private Long unRealId = 2l;
+
 	private HttpMessageConverter mappingJackson2HttpMessageConverter;
 
 	private MediaType contentType = new MediaType(MediaType.APPLICATION_JSON.getType(),
@@ -116,6 +118,12 @@ public class LeagueApplicationTests {
 	}
 
 	@Test
+	public void testReadAccountNotFound() throws Exception {
+		this.mockMvc.perform(get("/accounts/" + "noUserName"))
+				.andExpect(status().isNotFound());
+	}
+
+	@Test
 	public void testAddTeam() throws Exception {
 		String teamJson = json(team);
 		this.mockMvc.perform(post("/teams")
@@ -141,6 +149,12 @@ public class LeagueApplicationTests {
 				.andExpect(content().contentType(contentType))
 				.andExpect(jsonPath("$.id", is(this.team.getId().intValue())))
 				.andExpect(jsonPath("$.name", is(this.team.getName())));
+	}
+
+	@Test
+	public void testReadTeamNotFound() throws Exception {
+		this.mockMvc.perform(get("/teams/" + unRealId))
+				.andExpect(status().isNotFound());
 	}
 
 	@Test
@@ -177,6 +191,10 @@ public class LeagueApplicationTests {
 
 		Account accountResultAfter = this.accountRepository.findOne(account.getId());
 		Assert.assertThat(accountResultAfter.getTeam(), nullValue());
+	}
+
+	@Test
+	public void contextLoads() {
 	}
 
 	protected String json(Object o) throws IOException {

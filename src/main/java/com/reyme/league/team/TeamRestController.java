@@ -73,7 +73,7 @@ public class TeamRestController {
     }
 
     private void validateTeam(Long teamId) {
-        if(this.teamRepository.findOne(teamId).isNew()) {
+        if(this.teamRepository.findOne(teamId) == null) {
             throw new TeamNotFoundException(teamId);
         }
     }
