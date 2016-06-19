@@ -1,2 +1,2 @@
 # The League
-[![Build Status](https://travis-ci.org/dabboxking/league.svg?branch=master)](https://travis-ci.org/dabboxking/league)
+[![Build Status](https://travis-ci.org/dabboxking/league.svg?branch=master)](https://travis-ci.org/dabboxking/league)[![Coverage Status](https://coveralls.io/repos/dabboxking/league/badge.svg?branch=master&service=github)](https://coveralls.io/github/dabboxking/league?branch=master)
