@@ -33,6 +33,21 @@ public class AccountRestController {
 
     @RequestMapping(value = "/{username}", method = RequestMethod.GET)
     Account readAccount(@PathVariable String username) {
+        validateAccount(username);
         return this.accountRepository.findByUsername(username).get();
+    }
+
+    private void validateAccount(String username) {
+        this.accountRepository.findByUsername(username).orElseThrow(
+                () -> new UserNotFoundException(username)
+        );
+    }
+}
+
+@ResponseStatus(HttpStatus.NOT_FOUND)
+class UserNotFoundException extends RuntimeException {
+
+    public UserNotFoundException(String userId) {
+        super("could not find user '" + userId + "'.");
     }
 }

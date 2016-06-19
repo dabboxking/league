@@ -45,26 +45,43 @@ public class TeamRestController {
 
     @RequestMapping(value = "/{teamId}", method = RequestMethod.GET)
     Team readTeam(@PathVariable Long teamId) {
+        validateTeam(teamId);
         return this.teamRepository.findOne(teamId);
     }
 
     @RequestMapping(value = "/{teamId}/accounts", method = RequestMethod.GET)
     Collection<Account> readTeamMembers(@PathVariable Long teamId) {
+        validateTeam(teamId);
         return this.teamRepository.findOne(teamId).getAccounts();
     }
 
     @RequestMapping(value = "/{teamId}/accounts/{accountId}", method = RequestMethod.POST)
     void addTeamMember(@PathVariable Long teamId, @PathVariable Long accountId) {
+        validateTeam(teamId);
         Team team = this.teamRepository.findOne(teamId);
         Account account = this.accountRepository.findOne(accountId);
         account.setTeam(team);
         this.accountRepository.save(account);
     }
 
-    @RequestMapping(value = "/accounts/{accountId}", method = RequestMethod.DELETE)
-    void removeTeamMember(@PathVariable Long accountId) {
+    @RequestMapping(value = "/{teamId}/accounts/{accountId}", method = RequestMethod.DELETE)
+    void removeTeamMember(@PathVariable Long teamId, @PathVariable Long accountId) {
+        validateTeam(teamId);
         Account account = this.accountRepository.findOne(accountId);
         account.setTeam(null);
         this.accountRepository.save(account);
+    }
+
+    private void validateTeam(Long teamId) {
+        if(this.teamRepository.findOne(teamId).isNew()) {
+            throw new TeamNotFoundException(teamId);
+        }
+    }
+}
+
+@ResponseStatus(HttpStatus.NOT_FOUND)
+class TeamNotFoundException extends RuntimeException {
+    public TeamNotFoundException(Long teamId) {
+        super("could not find user '" + teamId + "'.");
     }
 }

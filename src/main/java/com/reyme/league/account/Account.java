@@ -60,4 +60,8 @@ public class Account {
     public void setTeam(Team team) {
         this.team = team;
     }
+
+    public boolean isNew() {
+        return getId() == null;
+    }
 }
