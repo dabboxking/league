@@ -1,0 +1,112 @@
+package com.reyme.league;
+
+import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.nullValue;
+import static org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders;
+import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.links;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.patch;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+import com.reyme.league.account.Account;
+import com.reyme.league.account.AccountRepository;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.http.MediaType;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.mock.http.MockHttpOutputMessage;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.context.WebApplicationContext;
+
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.Arrays;
+
+@RunWith(SpringJUnit4ClassRunner.class)
+@SpringApplicationConfiguration(classes = LeagueApplication.class)
+@WebAppConfiguration
+public class LeagueApplicationTests {
+
+	@Autowired
+	private WebApplicationContext context;
+
+	@Autowired
+	private AccountRepository accountRepository;
+
+	@Autowired
+	void setConverters(HttpMessageConverter<?>[] converters) {
+
+		this.mappingJackson2HttpMessageConverter = Arrays.asList(converters).stream().filter(
+				hmc -> hmc instanceof MappingJackson2HttpMessageConverter).findAny().get();
+
+		Assert.assertNotNull("the JSON message converter must not be null",
+				this.mappingJackson2HttpMessageConverter);
+	}
+
+	private MockMvc mockMvc;
+
+	private Account account;
+
+	private String userName = "jsmith";
+
+	private String passWord = "1q2w3e";
+
+	private HttpMessageConverter mappingJackson2HttpMessageConverter;
+
+	private MediaType contentType = new MediaType(MediaType.APPLICATION_JSON.getType(),
+			MediaType.APPLICATION_JSON.getSubtype(),
+			Charset.forName("utf8"));
+
+	@Before
+	public void setup() {
+		this.mockMvc = webAppContextSetup(this.context).build();
+		this.accountRepository.deleteAllInBatch();
+		this.account = accountRepository.save(new Account(userName, passWord));
+	}
+
+	@Test
+	public void testIndex() throws Exception {
+		this.mockMvc.perform(get("/")).andExpect(status().isOk());
+	}
+
+	@Test
+	public void createAccount() throws Exception {
+		String accountJson = json(account);
+		this.mockMvc.perform(post("/accounts")
+				.contentType(contentType)
+				.content(accountJson))
+				.andExpect(status().isCreated());
+	}
+
+	@Test
+	public void readSingleAccount() throws Exception {
+		this.mockMvc.perform(get("/accounts/" + userName))
+				.andExpect(status().isOk())
+				.andExpect(content().contentType(contentType))
+				.andExpect(jsonPath("$.id", is(this.account.getId().intValue())))
+				.andExpect(jsonPath("$.username", is(this.account.getUsername())));
+	}
+
+	protected String json(Object o) throws IOException {
+		MockHttpOutputMessage mockHttpOutputMessage = new MockHttpOutputMessage();
+		this.mappingJackson2HttpMessageConverter.write(o, MediaType.APPLICATION_JSON, mockHttpOutputMessage);
+		return mockHttpOutputMessage.getBodyAsString();
+	}
+
+}
