@@ -82,6 +82,13 @@ public class TeamRestController {
 @ResponseStatus(HttpStatus.NOT_FOUND)
 class TeamNotFoundException extends RuntimeException {
     public TeamNotFoundException(Long teamId) {
-        super("could not find user '" + teamId + "'.");
+        super("could not find team '" + teamId + "'.");
+    }
+}
+
+@ResponseStatus(HttpStatus.BAD_REQUEST)
+class TeamExistException extends RuntimeException {
+    public TeamExistException() {
+        super("team already exist!");
     }
 }

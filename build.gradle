@@ -57,3 +57,7 @@ jacocoTestReport {
 		html.destination "${buildDir}/jacocoHtml"
 	}
 }
+
+bootRun {
+	addResources true;
+}

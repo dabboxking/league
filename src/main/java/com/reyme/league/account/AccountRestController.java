@@ -7,6 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.util.Collection;
+
 /**
  * Created by reyme on 6/18/16.
  */
@@ -29,6 +31,11 @@ public class AccountRestController {
                 .fromCurrentRequest().path("/{id}")
                 .buildAndExpand(result.getId()).toUri());
         return new ResponseEntity<>(null,httpHeaders, HttpStatus.CREATED);
+    }
+
+    @RequestMapping(method = RequestMethod.GET)
+    Collection<Account> readAccounts() {
+        return this.accountRepository.findAll();
     }
 
     @RequestMapping(value = "/{username}", method = RequestMethod.GET)

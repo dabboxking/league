@@ -95,11 +95,6 @@ public class LeagueApplicationTests {
 	}
 
 	@Test
-	public void testIndex() throws Exception {
-		this.mockMvc.perform(get("/")).andExpect(status().isOk());
-	}
-
-	@Test
 	public void testAddAccount() throws Exception {
 		String accountJson = json(account);
 		this.mockMvc.perform(post("/accounts")
