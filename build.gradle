@@ -10,9 +10,14 @@ buildscript {
 	}
 }
 
+plugins {
+	id 'com.github.kt3k.coveralls' version '2.6.3'
+}
+
 apply plugin: 'java'
 apply plugin: 'eclipse'
-apply plugin: 'spring-boot' 
+apply plugin: 'spring-boot'
+apply plugin: "jacoco"
 
 jar {
 	baseName = 'league'
@@ -43,3 +48,25 @@ eclipse {
 		 containers 'org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8'
 	}
 }
+
+/*jacoco {
+	toolVersion = "0.7.6.201602180812"
+	reportsDir = file("$buildDir/customJacocoReportDir")
+}*/
+
+jacocoTestReport {
+	reports {
+		xml.enabled true
+		html.enabled true
+		csv.enabled false
+		/*html.destination "${buildDir}/jacocoHtml"*/
+	}
+}
+
+/*test {
+	jacoco {
+		append = false
+		destinationFile = file("$buildDir/jacoco/jacocoTest.exec")
+		classDumpFile = file("$buildDir/jacoco/classpathdumps")
+	}
+}*/
