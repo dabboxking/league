@@ -6,6 +6,7 @@ import com.reyme.league.team.Team;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 
 /**
  * Created by reyme on 6/18/16.
@@ -22,6 +23,7 @@ public class Account {
     @JsonIgnore
     public String password;
 
+    @ManyToOne
     public Team team;
 
     Account() {
