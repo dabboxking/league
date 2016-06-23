@@ -18,9 +18,9 @@ import java.util.Collection;
 @RequestMapping("/teams")
 public class TeamRestController {
 
-    private final AccountRepository accountRepository;
+    final AccountRepository accountRepository;
 
-    private final TeamRepository teamRepository;
+    final TeamRepository teamRepository;
 
     @Autowired
     TeamRestController(AccountRepository accountRepository, TeamRepository teamRepository) {
@@ -41,6 +41,12 @@ public class TeamRestController {
     @RequestMapping(method = RequestMethod.GET)
     Collection<Team> readTeams() {
         return this.teamRepository.findAll();
+    }
+
+    @RequestMapping(method = RequestMethod.PUT)
+    void updateTeam(@RequestBody Team input) {
+        validateTeam(input.getId());
+        this.teamRepository.save(input);
     }
 
     @RequestMapping(value = "/{teamId}", method = RequestMethod.GET)
@@ -72,23 +78,10 @@ public class TeamRestController {
         this.accountRepository.save(account);
     }
 
-    private void validateTeam(Long teamId) {
+    void validateTeam(Long teamId) {
         if(this.teamRepository.findOne(teamId) == null) {
             throw new TeamNotFoundException(teamId);
         }
     }
 }
 
-@ResponseStatus(HttpStatus.NOT_FOUND)
-class TeamNotFoundException extends RuntimeException {
-    public TeamNotFoundException(Long teamId) {
-        super("could not find team '" + teamId + "'.");
-    }
-}
-
-@ResponseStatus(HttpStatus.BAD_REQUEST)
-class TeamExistException extends RuntimeException {
-    public TeamExistException() {
-        super("team already exist!");
-    }
-}

@@ -12,12 +12,14 @@ import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuild
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.patch;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.put;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.reyme.league.account.Account;
 import com.reyme.league.account.AccountRepository;
 import com.reyme.league.team.Team;
@@ -77,7 +79,7 @@ public class LeagueApplicationTests {
 
 	private String passWord = "1q2w3e";
 
-	private Long unRealId = 2l;
+	private Long unRealId = 1234567l;
 
 	private HttpMessageConverter mappingJackson2HttpMessageConverter;
 
@@ -104,6 +106,16 @@ public class LeagueApplicationTests {
 	}
 
 	@Test
+	public void testReadAccounts() throws Exception {
+		this.mockMvc.perform(get("/accounts"))
+				.andExpect(status().isOk())
+				.andExpect(content().contentType(contentType))
+				.andExpect(jsonPath("$", hasSize(1)))
+				.andExpect(jsonPath("$[0].id", is(this.account.getId().intValue())))
+				.andExpect(jsonPath("$[0].username", is(this.account.getUsername())));
+	}
+
+	@Test
 	public void testReadAccount() throws Exception {
 		this.mockMvc.perform(get("/accounts/" + userName))
 				.andExpect(status().isOk())
@@ -113,7 +125,7 @@ public class LeagueApplicationTests {
 	}
 
 	@Test
-	public void testReadAccountNotFound() throws Exception {
+	public void testAccountNotFound() throws Exception {
 		this.mockMvc.perform(get("/accounts/" + "noUserName"))
 				.andExpect(status().isNotFound());
 	}
@@ -125,6 +137,18 @@ public class LeagueApplicationTests {
 				.contentType(contentType)
 				.content(teamJson))
 				.andExpect(status().isCreated());
+	}
+
+	@Test
+	public void testUpdateTeam() throws Exception {
+		Assert.assertThat(this.team.getName(), is("Blue"));
+		team.setName("Red");
+		String teamJson = json(team);
+		this.mockMvc.perform(put("/teams")
+				.contentType(contentType)
+				.content(teamJson))
+				.andExpect(status().isOk());
+		Assert.assertThat(this.team.getName(), is("Red"));
 	}
 
 	@Test
@@ -147,7 +171,7 @@ public class LeagueApplicationTests {
 	}
 
 	@Test
-	public void testReadTeamNotFound() throws Exception {
+	public void testTeamNotFound() throws Exception {
 		this.mockMvc.perform(get("/teams/" + unRealId))
 				.andExpect(status().isNotFound());
 	}

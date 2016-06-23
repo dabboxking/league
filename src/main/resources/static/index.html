@@ -13,22 +13,24 @@
 </head>
 
 <body ng-app="league" ng-cloak class="ng-cloak">
-    <nav ng-controller="navigation as nav">
-        <ul class="right hide-on-med-and-down">
-            <li><a href="/">Home</a></li>
-            <li><a href="/register">Register</a></li>
-            <li><a href="/login">Login</a></li>
-            <li ng-show="authenticated"><a href="" ng-click="nav.logout()">Logout</a></li>
-        </ul>
-        <ul id="slide-out" class="side-nav">
-            <li><a href="/">Home</a></li>
-            <li><a href="/register">Register</a></li>
-            <li><a href="/login">Login</a></li>
-            <li ng-show="authenticated"><a href="" ng-click="nav.logout()">Logout</a></li>
-        </ul>
-        <a href="#" data-activates="slide-out" class="button-collapse"><i class="mdi-navigation-menu"></i></a>
-    </nav>
-    <div ng-view class="container"></div>
+    <header>
+        <nav ng-controller="navigation as nav">
+            <div class="nav-wrapper">
+                <ul id="slide-out" class="side-nav fixed">
+                    <li><a href="/">Home</a></li>
+                    <li ng-show="authenticated"><a href="/account">Manage Account</a></li>
+                    <li ng-show="authenticated"><a href="/team">Manage Team</a></li>
+                    <li ng-show="!authenticated"><a href="/register">Register</a></li>
+                    <li ng-show="!authenticated"><a href="/login">Login</a></li>
+                </ul>
+                <a href="#" data-activates="slide-out" class="button-collapse"><i class="mdi-navigation-menu"></i></a>
+            </div>
+        </nav>
+    </header>
+    <main>
+        <div ng-view class="container"></div>
+    </main>
+
     <!--Import jQuery before materialize.js-->
     <script type="text/javascript" src="js/ext/angular.min.js"></script>
     <script type="text/javascript" src="js/ext/angular-route.min.js"></script>
