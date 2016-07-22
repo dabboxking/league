@@ -16,10 +16,10 @@
             <div class="nav-wrapper">
                 <ul id="slide-out" class="side-nav fixed">
                     <li><a href="/">Home</a></li>
-                    <li ng-show="!authenticated"><a href="/players">Players</a></li>
+                    <li ng-show="authenticated"><a href="/players">Players</a></li>
                     <li ng-show="!authenticated"><a href="/team">Teams</a></li>
-                    <li ng-show="!authenticated"><a href="/register">Register</a></li>
-                    <li ng-show="!authenticated"><a href="/login">Login</a></li>
+                    <li ng-show="authenticated"><a href="/register">Register</a></li>
+                    <li ng-show="authenticated"><a href="/login">Login</a></li>
                 </ul>
                 <a href="#" data-activates="slide-out" class="button-collapse"><i class="material-icons">menu</i></a>
             </div>

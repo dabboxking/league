@@ -6,7 +6,7 @@ $(function () {
    var league = (function () {
        var init = function() {
            $(".button-collapse").sideNav({
-               closeOnClick: true
+               //closeOnClick: true
            });
        };
        return {

@@ -2,7 +2,7 @@
   {
     "id": 1,
     "username": "user1",
-    "imgPath": "data/player1.jpg"
+    "imgPath": "https://s3.amazonaws.com/project-league/player1.jpg"
   },
   {
     "id": 2,

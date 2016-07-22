@@ -3,48 +3,48 @@
     "id": 1,
     "name": "Red",
     "accounts": [],
-    "imgPath": "data/team.jpg"
+    "imgPath": "https://s3.amazonaws.com/project-league/team.jpg"
   },
   {
     "id": 2,
     "name": "Blue",
     "accounts": [],
-    "imgPath": "data/team.jpg"
+    "imgPath": "https://s3.amazonaws.com/project-league/team.jpg"
   },
   {
     "id": 3,
     "name": "Green",
     "accounts": [],
-    "imgPath": "data/team.jpg"
+    "imgPath": "https://s3.amazonaws.com/project-league/team.jpg"
   },
   {
     "id": 4,
     "name": "Yellow",
     "accounts": [],
-    "imgPath": "data/team.jpg"
+    "imgPath": "https://s3.amazonaws.com/project-league/team.jpg"
   },
   {
     "id": 5,
     "name": "Black",
     "accounts": [],
-    "imgPath": "data/team.jpg"
+    "imgPath": "https://s3.amazonaws.com/project-league/team.jpg"
   },
   {
     "id": 6,
     "name": "White",
     "accounts": [],
-    "imgPath": "data/team.jpg"
+    "imgPath": "https://s3.amazonaws.com/project-league/team.jpg"
   },
   {
     "id": 7,
     "name": "Brown",
     "accounts": [],
-    "imgPath": "data/team.jpg"
+    "imgPath": "https://s3.amazonaws.com/project-league/team.jpg"
   },
   {
     "id": 8,
     "name": "Grey",
     "accounts": [],
-    "imgPath": "data/team.jpg"
+    "imgPath": "https://s3.amazonaws.com/project-league/team.jpg"
   }
 ]
