@@ -31,20 +31,9 @@ public class HomeRestController {
         this.teamRepository = teamRepository;
     }
 
-    /**
-     * Retrieve the authenticated user
-     * @param principal
-     * @return
-     */
-    //TODO Setup test for this
     @RequestMapping("/user")
-    public Map<String, Object> user(Principal principal) {
-        validate(principal);
-        Map<String,Object> model = new HashMap<>();
-        Account account = accountRepository.findByUsername(principal.getName()).get();
-        model.put("username", account.getUsername());
-        model.put("teamName", account.getTeam().getName());
-        return model;
+    public Principal user(Principal user) {
+        return user;
     }
 
     private void validate(Principal principal) {

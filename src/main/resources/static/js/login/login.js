@@ -1,6 +1,41 @@
 /**
  * Created by reyme on 6/19/16.
  */
-angular.module('navigation', []).controller('navigation', function() {
+angular.module('navigation', ['ngRoute']).controller('navigation', function($rootScope, $http, $location) {
 
+        var self = this;
+
+        var authenticate = function(credentials, callback) {
+
+            var headers = credentials ? {authorization : "Basic " + btoa(credentials.username + ":" + credentials.password)} : {};
+
+            $http.get('user', {headers : headers}).then(function(response) {
+                if (response.data.name) {
+                    $rootScope.authenticated = true;
+                } else {
+                    $rootScope.authenticated = false;
+                }
+                callback && callback();
+            }, function() {
+                $rootScope.authenticated = false;
+                callback && callback();
+            });
+
+        };
+
+        authenticate();
+
+        self.credentials = {};
+
+        self.login = function() {
+            authenticate(self.credentials, function() {
+                if ($rootScope.authenticated) {
+                    $location.path("/");
+                    self.error = false;
+                } else {
+                    $location.path("/login");
+                    self.error = true;
+                }
+            });
+        };
 });
