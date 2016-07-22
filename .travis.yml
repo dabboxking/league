@@ -1,10 +1,15 @@
 sudo: false
 language: java
 jdk:
-  - oraclejdk8
-
+- oraclejdk8
 script:
- - ./gradlew build --stacktrace --info --no-daemon
-
+- "./gradlew build --stacktrace --info --no-daemon"
 after_success:
- - ./gradlew jacocoTestReport coveralls
+- "./gradlew jacocoTestReport coveralls"
+deploy:
+  provider: heroku
+  api_key:
+    secure: HZi9dLEigU3GT103pQoeWEp3t0aH9LuBCG/O71pymwI+szkAkXo6owjaAuWaKHQCunCDo8cjcT8PxdK1qh5m3zXXn2XtpRGgg/uhDS5iPW3zT6hGaIYYdfY6VB0GePDOZk8N25B1EZ0Nagw44gnvI7BdgBKyvwIG+X30ABABRPCPfm10K4kru9WkpW4fUYiCd3Z/HpJwlIStda1Gly3l+4HtadBdQcq/F6YCyDc+sgqXevxdUxiurISC654SUSWImRlJQPhDmt3rOhY3jj0NtysnEWZxz0Gx/4ChsKRshxruxt5lAWcnaqMVqyZ6NnahWdsxFnYwphmQaGTD8Dc6SvOf+yK0jPZRHRcErY+YiLIwdXwSKcIPuqjK6VAZloU7LSyHNJez2RGzVLjnheUdiAMBBCnM3fPUiVmfgjrCtMdFTx/zmkwfOVuAXUx2/WwLY5bb68nf+gyr4Ovypz4iSfVg9o3q92dFdVdx1IRJxILggtrAlY3EDM9ThRfdFVwJ/ajXtvNSKpgWrSlWPLoZNzUVQo/UbSQfiw/CpgvGeU6mpq2ixc1I9vIGtwkeO/PhCSSDqoRaj8boWwetp52zB5j+/NKHccoiGtuFRi6TpF0ScpM1sv/7+gOIangSery/USadeXIzxWI4zA45KCwN/tJhZmPVkAdtU470MNDU7a4=
+  app: league
+  on:
+    repo: dabboxking/league
